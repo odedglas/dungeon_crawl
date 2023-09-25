@@ -37,10 +37,11 @@ impl State {
     }
 
     fn clear(&mut self, ctx: &mut BTerm) {
-        ctx.set_active_console(0);
-        ctx.cls();
-        ctx.set_active_console(1);
-        ctx.cls();
+        let console_layers = 2;
+        for console_index in 0..= console_layers {
+            ctx.set_active_console(console_index);
+            ctx.cls();
+        }
     }
 }
 
@@ -49,10 +50,10 @@ impl GameState for State {
         self.clear(ctx);
         self.player.update(ctx, &self.map, &mut self.camera);
 
-        ctx.set_active_console(0); // Map base layer
+        ctx.set_active_console(1); // Map base layer
         self.map.render(ctx, &self.camera);
 
-        ctx.set_active_console(1); // Player layer
+        ctx.set_active_console(2); // Player layer
         self.player.render(ctx, &self.camera);
     }
 }

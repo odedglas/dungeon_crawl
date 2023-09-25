@@ -45,7 +45,7 @@ impl Map {
                         }
                     };
 
-                    ctx.set(x - camera.left, y - camera.top, RED, PINK, to_cp437(glyph));
+                    ctx.set(x - camera.left, y - camera.top, WHITE, BLACK, to_cp437(glyph));
                 }
             }
         }
