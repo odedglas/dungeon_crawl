@@ -33,7 +33,7 @@ impl Player {
 
             if map.can_enter_cell(new_position) {
                 self.position = new_position;
-                camera.on_player_move(self.position);
+                camera.on_player_move(new_position);
             }
         }
     }

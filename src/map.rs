@@ -36,14 +36,16 @@ impl Map {
                 let point = Point { x, y };
 
                 if let Some(index) = safe_position_index(&point) {
-                    match self.cells[index] {
+                    let glyph = match self.cells[index] {
                         CellType::Floor => {
-                            ctx.set(x - camera.left, y - camera.top, WHITE, BLACK, to_cp437('.'));
+                            '.'
                         }
                         CellType::Wall => {
-                            ctx.set(x - camera.left, y - camera.top, WHITE, BLACK, to_cp437('#'));
+                            '#'
                         }
-                    }
+                    };
+
+                    ctx.set(x - camera.left, y - camera.top, RED, PINK, to_cp437(glyph));
                 }
             }
         }

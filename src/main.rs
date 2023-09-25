@@ -49,7 +49,7 @@ impl GameState for State {
         self.clear(ctx);
         self.player.update(ctx, &self.map, &mut self.camera);
 
-        ctx.set_active_console(1); // Map base layer
+        ctx.set_active_console(0); // Map base layer
         self.map.render(ctx, &self.camera);
 
         ctx.set_active_console(1); // Player layer
