@@ -26,7 +26,7 @@ impl Camera {
         Self::from(&player_position)
     }
 
-    pub fn on_player_move(&mut self, player_position: Point) {
+    pub fn center(&mut self, player_position: Point) {
         *self = Self::from(&player_position);
     }
 }
