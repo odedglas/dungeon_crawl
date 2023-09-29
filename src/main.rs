@@ -43,6 +43,11 @@ impl State {
 
         spawn_player(&mut ecs, start_point);
 
+        // Spawn monsters over each room except the room player starts in.
+        map_builder.rooms.iter().skip(1).for_each(|room| {
+            spawn_monster(&mut ecs, &mut rand, room.center());
+        });
+
         resources.insert(map_builder.map);
         resources.insert(Camera::new(start_point));
 
