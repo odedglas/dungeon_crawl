@@ -11,3 +11,6 @@ pub struct Player; // Tag
 
 #[derive(Clone, Copy, Debug, PartialEq, Eq)]
 pub struct Monster; // Tag
+
+#[derive(Clone, Copy, Debug, PartialEq, Eq)]
+pub struct RandomMovement;
