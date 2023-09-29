@@ -1,44 +1,61 @@
 mod camera;
+mod components;
 mod map;
 mod map_builder;
-mod player;
+mod spawner;
+mod systems;
 
 mod prelude {
     pub use bracket_lib::prelude::*;
+    pub use legion::systems::CommandBuffer;
+    pub use legion::world::SubWorld;
+    pub use legion::*;
+
     pub const SCREEN_WIDTH: i32 = 80;
     pub const SCREEN_HEIGHT: i32 = 50;
     pub const DISPLAY_WIDTH: i32 = SCREEN_WIDTH / 2;
     pub const DISPLAY_HEIGHT: i32 = SCREEN_HEIGHT / 2;
+
     pub use crate::camera::*;
+    pub use crate::components::*;
     pub use crate::map::*;
     pub use crate::map_builder::*;
-    pub use crate::player::*;
+    pub use crate::spawner::*;
+    pub use crate::systems::*;
 }
 
 use prelude::*;
 
 struct State {
-    map: Map,
-    player: Player,
-    camera: Camera,
+    ecs: World,
+    resources: Resources,
+    systems: Schedule,
 }
 
 impl State {
     pub fn new() -> Self {
+        let mut ecs = World::default();
+        let mut resources = Resources::default();
         let mut rand = RandomNumberGenerator::new();
+
         let map_builder = MapBuilder::new(&mut rand);
         let start_point = map_builder.get_starting_point();
 
+        spawn_player(&mut ecs, start_point);
+
+        resources.insert(map_builder.map);
+        resources.insert(Camera::new(start_point));
+
         Self {
-            map: map_builder.map,
-            player: Player::new(start_point),
-            camera: Camera::new(start_point),
+            ecs,
+            resources,
+            systems: build_scheduler(),
         }
     }
 
     fn clear(&mut self, ctx: &mut BTerm) {
-        let console_layers = 2;
-        for console_index in 0..= console_layers {
+        let draw_layers = 2;
+        for console_index in 0..=draw_layers {
             ctx.set_active_console(console_index);
             ctx.cls();
         }
@@ -48,13 +65,12 @@ impl State {
 impl GameState for State {
     fn tick(&mut self, ctx: &mut BTerm) {
         self.clear(ctx);
-        self.player.update(ctx, &self.map, &mut self.camera);
 
-        ctx.set_active_console(1); // Map base layer
-        self.map.render(ctx, &self.camera);
+        self.resources.insert(ctx.key); // Exposing keypresses to systems as resource
 
-        ctx.set_active_console(2); // Player layer
-        self.player.render(ctx, &self.camera);
+        self.systems.execute(&mut self.ecs, &mut self.resources);
+
+        render_draw_buffer(ctx).expect("Render error");
     }
 }
 
