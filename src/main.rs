@@ -54,8 +54,8 @@ impl State {
     }
 
     fn clear(&mut self, ctx: &mut BTerm) {
-        let draw_layers = 2;
-        for console_index in 0..=draw_layers {
+        let console_layers = 2;
+        for console_index in 0..console_layers {
             ctx.set_active_console(console_index);
             ctx.cls();
         }
@@ -75,7 +75,7 @@ impl GameState for State {
 }
 
 fn main() -> BError {
-    let context = BTermBuilder::simple80x50()
+    let context = BTermBuilder::new()
         .with_title("Dungeon Crawler")
         .with_fps_cap(30.0)
         .with_dimensions(DISPLAY_WIDTH, DISPLAY_HEIGHT)
