@@ -1,9 +1,12 @@
+#![warn(clippy::pedantic)]
+
 mod camera;
 mod components;
 mod map;
 mod map_builder;
 mod spawner;
 mod systems;
+mod turn_state;
 
 mod prelude {
     pub use bracket_lib::prelude::*;
@@ -22,6 +25,7 @@ mod prelude {
     pub use crate::map_builder::*;
     pub use crate::spawner::*;
     pub use crate::systems::*;
+    pub use crate::turn_state::*;
 }
 
 use prelude::*;
@@ -29,7 +33,15 @@ use prelude::*;
 struct State {
     ecs: World,
     resources: Resources,
-    systems: Schedule,
+    systems: Systems,
+}
+
+fn clear_console(ctx: &mut BTerm) {
+    let console_layers = 2;
+    for console_index in 0..console_layers {
+        ctx.set_active_console(console_index);
+        ctx.cls();
+    }
 }
 
 impl State {
@@ -50,30 +62,24 @@ impl State {
 
         resources.insert(map_builder.map);
         resources.insert(Camera::new(start_point));
+        resources.insert(TurnState::AwaitingInput);
 
         Self {
             ecs,
             resources,
-            systems: build_scheduler(),
-        }
-    }
-
-    fn clear(&mut self, ctx: &mut BTerm) {
-        let console_layers = 2;
-        for console_index in 0..console_layers {
-            ctx.set_active_console(console_index);
-            ctx.cls();
+            systems: Systems::new(),
         }
     }
 }
 
 impl GameState for State {
     fn tick(&mut self, ctx: &mut BTerm) {
-        self.clear(ctx);
+        clear_console(ctx);
 
-        self.resources.insert(ctx.key); // Exposing keypresses to systems as resource
+        self.resources.insert(ctx.key); // Tick level resource
 
-        self.systems.execute(&mut self.ecs, &mut self.resources);
+        self.systems
+            .execute_turn(&mut self.ecs, &mut self.resources); // Executes turn based system
 
         render_draw_buffer(ctx).expect("Render error");
     }

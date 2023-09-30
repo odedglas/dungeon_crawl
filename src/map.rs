@@ -12,11 +12,11 @@ pub struct Map {
     pub cells: Vec<CellType>,
 }
 
-pub fn position_index(point: &Point) -> usize {
+pub fn position_index(point: Point) -> usize {
     ((point.y * SCREEN_WIDTH) + point.x) as usize
 }
 
-pub fn safe_position_index(point: &Point) -> Option<usize> {
+pub fn safe_position_index(point: Point) -> Option<usize> {
     if !Map::in_screen_bounds(point) {
         return None;
     }
@@ -31,12 +31,11 @@ impl Map {
         }
     }
 
-    pub fn in_screen_bounds(point: &Point) -> bool {
+    pub fn in_screen_bounds(point: Point) -> bool {
         point.y >= 0 && point.y < SCREEN_HEIGHT && point.x >= 0 && point.x < SCREEN_WIDTH
     }
 
     pub fn can_enter_cell(&self, position: Point) -> bool {
-        Self::in_screen_bounds(&position)
-            && self.cells[position_index(&position)] == CellType::Floor
+        Self::in_screen_bounds(position) && self.cells[position_index(position)] == CellType::Floor
     }
 }

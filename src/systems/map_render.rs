@@ -12,7 +12,7 @@ pub fn map_render(#[resource] map: &Map, #[resource] camera: &Camera) {
             let point = Point::new(x, y);
             let offset = Point::new(camera.left, camera.top);
 
-            if let Some(index) = safe_position_index(&point) {
+            if let Some(index) = safe_position_index(point) {
                 let glyph = match map.cells[index] {
                     CellType::Floor => to_cp437('.'),
                     CellType::Wall => to_cp437('#'),

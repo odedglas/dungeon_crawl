@@ -1,19 +1,17 @@
 use crate::prelude::*;
 
-fn get_mouse_move_delta(key: &Option<VirtualKeyCode>) -> Option<Point> {
-    let mut delta: Option<Point> = None;
-
+fn has_keypress(key: &Option<VirtualKeyCode>) -> bool {
     if let Some(key) = key {
-        delta = match key {
-            VirtualKeyCode::Left => Some(Point::new(-1, 0)),
-            VirtualKeyCode::Right => Some(Point::new(1, 0)),
-            VirtualKeyCode::Up => Some(Point::new(0, -1)),
-            VirtualKeyCode::Down => Some(Point::new(0, 1)),
-            _ => None,
+        return match key {
+            VirtualKeyCode::Left => true,
+            VirtualKeyCode::Right => true,
+            VirtualKeyCode::Up => true,
+            VirtualKeyCode::Down => true,
+            _ => false,
         };
     }
 
-    delta
+    false
 }
 
 #[system]
@@ -21,20 +19,25 @@ fn get_mouse_move_delta(key: &Option<VirtualKeyCode>) -> Option<Point> {
 #[read_component(Player)]
 pub fn player_input(
     ecs: &mut SubWorld,
-    #[resource] map: &Map,
+    commands: &mut CommandBuffer,
     #[resource] key: &Option<VirtualKeyCode>,
-    #[resource] camera: &mut Camera,
+    #[resource] turn_state: &mut TurnState,
 ) {
-    if let Some(delta) = get_mouse_move_delta(key) {
-        let mut players = <&mut Point>::query().filter(component::<Player>());
+    if has_keypress(key) {
+        let mut players = <(Entity, &mut Point)>::query().filter(component::<Player>());
 
-        players.iter_mut(ecs).for_each(|pos| {
-            let destination = *pos + delta;
-
-            if map.can_enter_cell(destination) {
-                *pos = destination;
-                camera.center(destination);
-            }
+        players.iter_mut(ecs).for_each(|(entity, pos)| {
+            // Push move intent processed by movement system
+            commands.push((
+                (),
+                MoveIntent {
+                    entity: *entity,
+                    current: *pos,
+                    movement_type: Movement::Keyboard(key.unwrap()),
+                },
+            ));
         });
+
+        turn_state.next();
     }
 }

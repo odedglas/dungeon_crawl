@@ -42,7 +42,7 @@ impl MapBuilder {
             let room = create_room_rect(rand);
 
             let mut overlap = false;
-            for r in self.rooms.iter() {
+            for r in &self.rooms {
                 if r.intersect(&room) {
                     overlap = true;
                     break;
@@ -52,13 +52,13 @@ impl MapBuilder {
             if !overlap {
                 // Mark room points as floor
                 room.for_each(|room_point| {
-                    if Map::in_screen_bounds(&room_point) {
-                        let floor_index = position_index(&room_point);
-                        self.map.cells[floor_index] = CellType::Floor
+                    if Map::in_screen_bounds(room_point) {
+                        let floor_index = position_index(room_point);
+                        self.map.cells[floor_index] = CellType::Floor;
                     }
                 });
 
-                self.rooms.push(room)
+                self.rooms.push(room);
             }
         }
     }
@@ -103,7 +103,7 @@ impl MapBuilder {
                 Point::new(anchor.x, value)
             };
 
-            if let Some(index) = safe_position_index(&position_anchor) {
+            if let Some(index) = safe_position_index(position_anchor) {
                 self.map.cells[index] = CellType::Floor;
             }
         }
