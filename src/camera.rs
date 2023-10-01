@@ -22,11 +22,11 @@ impl From<&Point> for Camera {
 }
 
 impl Camera {
-    pub fn new(player_position: Point) -> Self {
-        Self::from(&player_position)
+    pub fn new(focal_point: Point) -> Self {
+        Self::from(&focal_point)
     }
 
-    pub fn center(&mut self, player_position: Point) {
-        *self = Self::from(&player_position);
+    pub fn center(&mut self, focal_point: Point) {
+        *self = Self::from(&focal_point);
     }
 }

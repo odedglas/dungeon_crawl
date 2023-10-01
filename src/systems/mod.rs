@@ -1,9 +1,11 @@
-mod collision_detection;
+mod combat;
 mod entity_render;
+mod hud;
 mod map_render;
 mod movement;
 mod player_input;
 mod random_movement;
+mod tooltip;
 mod turn_transition;
 
 use crate::prelude::*;
@@ -41,17 +43,20 @@ fn build_await_user_input_scheduler() -> Schedule {
         .add_system(player_input::player_input_system())
         .add_system(map_render::map_render_system())
         .add_system(entity_render::entity_render_system())
+        .add_system(hud::hud_system())
+        .add_system(tooltip::tooltip_system())
         .build()
 }
 
 fn build_player_scheduler() -> Schedule {
     Schedule::builder()
-        .add_system(movement::movement_system())
+        .add_system(combat::combat_system())
         .flush()
-        .add_system(collision_detection::collision_detection_system())
+        .add_system(movement::movement_system())
         .flush()
         .add_system(map_render::map_render_system())
         .add_system(entity_render::entity_render_system())
+        .add_system(hud::hud_system())
         .add_system(turn_transition::turn_transition_system())
         .build()
 }
@@ -59,12 +64,14 @@ fn build_player_scheduler() -> Schedule {
 pub fn build_monster_scheduler() -> Schedule {
     Schedule::builder()
         .add_system(random_movement::random_movement_system())
-        .add_system(movement::movement_system())
         .flush()
-        .add_system(collision_detection::collision_detection_system())
+        .add_system(combat::combat_system())
+        .flush()
+        .add_system(movement::movement_system())
         .flush()
         .add_system(map_render::map_render_system())
         .add_system(entity_render::entity_render_system())
+        .add_system(hud::hud_system())
         .add_system(turn_transition::turn_transition_system())
         .build()
 }

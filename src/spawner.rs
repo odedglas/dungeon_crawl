@@ -8,28 +8,35 @@ pub fn spawn_player(ecs: &mut World, pos: Point) {
             color: ColorPair::new(WHITE, BLACK),
             glyph: to_cp437('@'),
         },
+        Health::new(10),
     );
 
     ecs.push(player_component);
 }
 
 pub fn spawn_monster(ecs: &mut World, rand: &mut RandomNumberGenerator, pos: Point) {
+    let (hp, name, glyph) = randomized_monster(rand);
+
     ecs.push((
         Monster,
         pos,
         Render {
             color: ColorPair::new(WHITE, BLACK),
-            glyph: randomized_monster(rand),
+            glyph,
         },
         RandomMovement,
+        Health::new(hp),
+        EntityName(name),
     ));
 }
 
-fn randomized_monster(rand: &mut RandomNumberGenerator) -> FontCharType {
-    match rand.range(0, 4) {
-        0 => to_cp437('E'),
-        1 => to_cp437('O'),
-        2 => to_cp437('o'),
-        _ => to_cp437('g'),
+type MonsterSpawn = (i32, String, FontCharType);
+
+fn randomized_monster(rand: &mut RandomNumberGenerator) -> MonsterSpawn {
+    match rand.roll_dice(1, 10) {
+        0..=1 => (3, "Two Headed".to_string(), to_cp437('E')),
+        2..=3 => (4, "Oger".to_string(), to_cp437('O')),
+        4..=6 => (2, "Orc".to_string(), to_cp437('o')),
+        _ => (1, "Goblin".to_string(), to_cp437('g')),
     }
 }

@@ -18,6 +18,8 @@ mod prelude {
     pub const SCREEN_HEIGHT: i32 = 50;
     pub const DISPLAY_WIDTH: i32 = SCREEN_WIDTH / 2;
     pub const DISPLAY_HEIGHT: i32 = SCREEN_HEIGHT / 2;
+    pub const HUD_WIDTH: i32 = SCREEN_WIDTH * 2;
+    pub const HUD_HEIGHT: i32 = SCREEN_HEIGHT * 2;
 
     pub use crate::camera::*;
     pub use crate::components::*;
@@ -38,7 +40,7 @@ struct State {
 
 fn clear_console(ctx: &mut BTerm) {
     let console_layers = 2;
-    for console_index in 0..console_layers {
+    for console_index in 0..=console_layers {
         ctx.set_active_console(console_index);
         ctx.cls();
     }
@@ -78,6 +80,9 @@ impl GameState for State {
 
         self.resources.insert(ctx.key); // Tick level resource
 
+        ctx.set_active_console(0);
+        self.resources.insert(Point::from_tuple(ctx.mouse_pos())); // Mouse position resolved with map layer console
+
         self.systems
             .execute_turn(&mut self.ecs, &mut self.resources); // Executes turn based system
 
@@ -92,9 +97,11 @@ fn main() -> BError {
         .with_dimensions(DISPLAY_WIDTH, DISPLAY_HEIGHT)
         .with_tile_dimensions(32, 32)
         .with_resource_path("resources/")
-        .with_font("dungeonfont.png", 32, 32)
-        .with_simple_console(DISPLAY_WIDTH, DISPLAY_HEIGHT, "dungeonfont.png")
-        .with_simple_console_no_bg(DISPLAY_WIDTH, DISPLAY_HEIGHT, "dungeonfont.png")
+        .with_font("dungeonfont.png", 32, 32) // Main font
+        .with_font("terminal8x8.png", 8, 8) // HUD font
+        .with_simple_console(DISPLAY_WIDTH, DISPLAY_HEIGHT, "dungeonfont.png") // Map layer
+        .with_simple_console_no_bg(DISPLAY_WIDTH, DISPLAY_HEIGHT, "dungeonfont.png") // Entity layer
+        .with_simple_console_no_bg(HUD_WIDTH, HUD_HEIGHT, "terminal8x8.png") // HUD layer
         .build()?;
 
     main_loop(context, State::new())
