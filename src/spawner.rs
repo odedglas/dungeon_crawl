@@ -1,5 +1,7 @@
 use crate::prelude::*;
 
+type MonsterSpawn = (i32, String, FontCharType);
+
 pub fn spawn_player(ecs: &mut World, pos: Point) {
     let player_component = (
         Player,
@@ -24,13 +26,11 @@ pub fn spawn_monster(ecs: &mut World, rand: &mut RandomNumberGenerator, pos: Poi
             color: ColorPair::new(WHITE, BLACK),
             glyph,
         },
-        RandomMovement,
+        MoveTowardsPlayer,
         Health::new(hp),
         EntityName(name),
     ));
 }
-
-type MonsterSpawn = (i32, String, FontCharType);
 
 fn randomized_monster(rand: &mut RandomNumberGenerator) -> MonsterSpawn {
     match rand.roll_dice(1, 10) {
@@ -39,4 +39,17 @@ fn randomized_monster(rand: &mut RandomNumberGenerator) -> MonsterSpawn {
         4..=6 => (2, "Orc".to_string(), to_cp437('o')),
         _ => (1, "Goblin".to_string(), to_cp437('g')),
     }
+}
+
+pub fn spawn_amulet_of_yala(ecs: &mut World, pos: Point) {
+    ecs.push((
+        Item,
+        AmuletOfYala,
+        pos,
+        Render {
+            color: ColorPair::new(WHITE, BLACK),
+            glyph: to_cp437('|'),
+        },
+        EntityName("Amulet of Yala".to_string()),
+    ));
 }

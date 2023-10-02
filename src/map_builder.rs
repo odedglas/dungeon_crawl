@@ -1,7 +1,8 @@
 use crate::prelude::*;
 use std::cmp::{max, min};
 
-const MAX_ROOMS: usize = 20;
+const MAX_ROOMS: usize = 10;
+const UNREACHABLE: &f32 = &f32::MAX;
 
 pub struct MapBuilder {
     pub map: Map,
@@ -67,6 +68,28 @@ impl MapBuilder {
         let first_room = self.rooms[0];
 
         first_room.center()
+    }
+
+    pub fn get_amulet_point(&self) -> Point {
+        // Create Dijsktra map to find the furthest point from the player
+        let dijkstra_map = DijkstraMap::new(
+            SCREEN_WIDTH,
+            SCREEN_HEIGHT,
+            &[self.map.point2d_to_index(self.get_starting_point())],
+            &self.map,
+            1024.0,
+        );
+
+        self.map.index_to_point2d(
+            dijkstra_map
+                .map
+                .iter()
+                .enumerate()
+                .filter(|(_, dijkstra_distance)| *dijkstra_distance < UNREACHABLE)
+                .max_by(|a, b| a.1.partial_cmp(b.1).unwrap()) // Farthest point tho reachable
+                .unwrap()
+                .0,
+        )
     }
 
     fn fill(&mut self, cell_type: CellType) {

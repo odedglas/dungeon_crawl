@@ -16,6 +16,9 @@ pub struct Monster; // Tag
 pub struct RandomMovement;
 
 #[derive(Clone, Copy, Debug, PartialEq, Eq)]
+pub struct MoveTowardsPlayer;
+
+#[derive(Clone, Copy, Debug, PartialEq, Eq)]
 pub enum Movement {
     Random,
     Keyboard,
@@ -48,3 +51,9 @@ impl Health {
 
 #[derive(Clone, PartialEq, Eq)]
 pub struct EntityName(pub String);
+
+#[derive(Clone, Copy, Debug, PartialEq, Eq)]
+pub struct Item;
+
+#[derive(Clone, Copy, Debug, PartialEq, Eq)]
+pub struct AmuletOfYala;

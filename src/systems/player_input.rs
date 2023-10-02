@@ -21,7 +21,7 @@ pub fn player_input(
             .find_map(|(entity, pos, health)| Some((*entity, *pos + delta, health)))
             .unwrap();
 
-        if delta == Point::zero() {
+        if should_heal(delta) {
             health.current = i32::min(health.max, health.current + 1);
             turn_state.next();
             return;
@@ -59,4 +59,8 @@ pub fn player_input(
 
         turn_state.next();
     }
+}
+
+fn should_heal(delta: Point) -> bool {
+    delta == Point::zero()
 }

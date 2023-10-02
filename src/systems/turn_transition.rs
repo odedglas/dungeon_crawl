@@ -9,5 +9,7 @@ pub fn turn_transition(_: &mut SubWorld, #[resource] turn_state: &mut TurnState)
         return;
     }
 
+    println!("[Turn Transition System] Turn state: {:?}", new_state);
+
     *turn_state = new_state;
 }
