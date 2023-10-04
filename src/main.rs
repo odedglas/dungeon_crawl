@@ -95,7 +95,7 @@ impl GameState for State {
 
         if let Some(VirtualKeyCode::Key1) = ctx.key {
             // Game Reset key
-            let turn_state =* self.resources.get::<TurnState>().unwrap();
+            let turn_state = *self.resources.get::<TurnState>().unwrap();
 
             let allowed_states = vec![TurnState::GameOver, TurnState::GameWon];
 

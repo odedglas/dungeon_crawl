@@ -1,5 +1,6 @@
 mod combat;
 mod entity_render;
+mod fields_of_view;
 mod hud;
 mod item_collector;
 mod map_render;
@@ -45,6 +46,8 @@ impl Systems {
 fn build_await_user_input_scheduler() -> Schedule {
     Schedule::builder()
         .add_system(player_input::player_input_system())
+        .add_system(fields_of_view::fields_of_view_system())
+        .flush()
         .add_system(map_render::map_render_system())
         .add_system(entity_render::entity_render_system())
         .add_system(hud::hud_system())
@@ -57,6 +60,8 @@ fn build_player_scheduler() -> Schedule {
         .add_system(combat::combat_system())
         .flush()
         .add_system(movement::movement_system())
+        .flush()
+        .add_system(fields_of_view::fields_of_view_system())
         .flush()
         .add_system(item_collector::item_collector_system())
         .flush()
@@ -75,6 +80,8 @@ pub fn build_monster_scheduler() -> Schedule {
         .add_system(combat::combat_system())
         .flush()
         .add_system(movement::movement_system())
+        .flush()
+        .add_system(fields_of_view::fields_of_view_system())
         .flush()
         .add_system(map_render::map_render_system())
         .add_system(entity_render::entity_render_system())

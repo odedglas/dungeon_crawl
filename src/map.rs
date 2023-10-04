@@ -1,4 +1,5 @@
 use crate::prelude::*;
+use std::collections::HashSet;
 
 const NUM_TILES: usize = (SCREEN_WIDTH * SCREEN_HEIGHT) as usize;
 
@@ -10,6 +11,7 @@ pub enum CellType {
 
 pub struct Map {
     pub cells: Vec<CellType>,
+    pub revealed_cells: Vec<bool>,
 }
 
 pub fn position_index(point: Point) -> usize {
@@ -28,6 +30,7 @@ impl Map {
     pub fn new() -> Self {
         Self {
             cells: vec![CellType::Wall; NUM_TILES],
+            revealed_cells: vec![false; NUM_TILES],
         }
     }
 
@@ -37,6 +40,13 @@ impl Map {
 
     pub fn can_enter_cell(&self, position: Point) -> bool {
         Self::in_screen_bounds(position) && self.cells[position_index(position)] == CellType::Floor
+    }
+
+    pub fn reveal_cells(&mut self, visible_tiles: &HashSet<Point>) {
+        for point in visible_tiles {
+            let index = position_index(*point);
+            self.revealed_cells[index] = true;
+        }
     }
 }
 
@@ -51,6 +61,10 @@ impl Algorithm2D for Map {
 }
 
 impl BaseMap for Map {
+    fn is_opaque(&self, idx: usize) -> bool {
+        self.cells[position_index(self.index_to_point2d(idx))] == CellType::Wall
+    }
+
     fn get_available_exits(&self, index: usize) -> SmallVec<[(usize, f32); 10]> {
         let mut exits = SmallVec::new();
         let location = self.index_to_point2d(index);

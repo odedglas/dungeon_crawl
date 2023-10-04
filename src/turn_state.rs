@@ -20,7 +20,9 @@ impl TurnState {
         *self = match self {
             TurnState::AwaitingInput => TurnState::PlayerTurn,
             TurnState::PlayerTurn => TurnState::MonsterTurn,
-            TurnState::MonsterTurn | TurnState::GameOver | TurnState::GameWon => TurnState::AwaitingInput,
+            TurnState::MonsterTurn | TurnState::GameOver | TurnState::GameWon => {
+                TurnState::AwaitingInput
+            }
         }
     }
 
