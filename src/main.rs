@@ -3,7 +3,7 @@
 mod camera;
 mod components;
 mod map;
-mod map_builder;
+mod map_builders;
 mod screens;
 mod spawner;
 mod systems;
@@ -21,11 +21,12 @@ mod prelude {
     pub const DISPLAY_HEIGHT: i32 = SCREEN_HEIGHT / 2;
     pub const HUD_WIDTH: i32 = SCREEN_WIDTH * 2;
     pub const HUD_HEIGHT: i32 = SCREEN_HEIGHT * 2;
+    pub const MAP_EDGE_PERIMETER: f32 = 2000.0;
 
     pub use crate::camera::*;
     pub use crate::components::*;
     pub use crate::map::*;
-    pub use crate::map_builder::*;
+    pub use crate::map_builders::*;
     pub use crate::screens::*;
     pub use crate::spawner::*;
     pub use crate::systems::*;
@@ -46,18 +47,24 @@ impl State {
         let mut resources = Resources::default();
         let mut rand = RandomNumberGenerator::new();
 
-        let map_builder = MapBuilder::new(&mut rand);
-        let start_point = map_builder.get_starting_point();
+        let architect = create_random_architect(&mut rand);
+
+        let start_point = architect.get_starting_point();
 
         spawn_player(&mut ecs, start_point);
-        spawn_amulet_of_yala(&mut ecs, map_builder.get_amulet_point());
+        spawn_amulet_of_yala(&mut ecs, architect.get_amulet_point());
 
         // Spawn monsters over each room except the room player starts in.
-        map_builder.rooms.iter().skip(1).for_each(|room| {
-            spawn_monster(&mut ecs, &mut rand, room.center());
-        });
+        architect
+            .get_map_builder()
+            .spawned_monsters
+            .iter()
+            .for_each(|monster_position| {
+                spawn_monster(&mut ecs, &mut rand, *monster_position);
+            });
 
-        resources.insert(map_builder.map);
+        // Shared global game Resources
+        resources.insert(architect.get_map_builder().map.clone());
         resources.insert(Camera::new(start_point));
         resources.insert(TurnState::AwaitingInput);
 

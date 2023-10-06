@@ -10,8 +10,8 @@ pub fn spawn_player(ecs: &mut World, pos: Point) {
             color: ColorPair::new(WHITE, BLACK),
             glyph: to_cp437('@'),
         },
-        FieldOfView::new(10),
-        Health::new(8),
+        FieldOfView::new(8),
+        Health::new(10),
     );
 
     ecs.push(player_component);

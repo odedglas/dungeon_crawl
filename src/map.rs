@@ -48,6 +48,13 @@ impl Map {
             self.revealed_cells[index] = true;
         }
     }
+
+    pub fn clone(&self) -> Self {
+        Self {
+            cells: self.cells.clone(),
+            revealed_cells: self.revealed_cells.clone(),
+        }
+    }
 }
 
 impl Algorithm2D for Map {

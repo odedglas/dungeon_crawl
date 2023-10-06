@@ -556,6 +556,14 @@ dependencies = [
 ]
 
 [[package]]
+name = "derives"
+version = "0.1.0"
+dependencies = [
+ "quote",
+ "syn 1.0.109",
+]
+
+[[package]]
 name = "dispatch"
 version = "0.2.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -581,6 +589,7 @@ name = "dungeoncrawl"
 version = "0.1.0"
 dependencies = [
  "bracket-lib",
+ "derives",
  "legion",
 ]
 
