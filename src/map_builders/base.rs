@@ -1,3 +1,4 @@
+use crate::map_builders::themes::{DungeonTheme, ForestTheme, MapTheme};
 use crate::prelude::*;
 
 const UNREACHABLE: &f32 = &f32::MAX;
@@ -7,6 +8,7 @@ pub struct MapBuilder {
     pub map: Map,
     pub rooms: Vec<Rect>,
     pub spawned_monsters: Vec<Point>,
+    pub theme: Option<Box<dyn MapTheme>>,
 }
 
 impl MapBuilder {
@@ -15,6 +17,7 @@ impl MapBuilder {
             map: Map::new(),
             rooms: vec![],
             spawned_monsters: vec![],
+            theme: None,
         }
     }
 
@@ -60,6 +63,19 @@ pub trait BaseMapArchitect {
 }
 
 pub trait MapArchitect: BaseMapArchitect {
+    fn get_map_theme(&self, rng: &mut RandomNumberGenerator) -> Box<dyn MapTheme> {
+        match rng.range(0, 2) {
+            0 => DungeonTheme::new(),
+            _ => ForestTheme::new(),
+        }
+    }
+
+    fn set_monsters(&mut self, rng: &mut RandomNumberGenerator) {
+        let monsters_positions = self.monsters_positions(rng);
+
+        self.get_mut_map_builder().spawned_monsters = monsters_positions;
+    }
+
     fn build(&mut self, rng: &mut RandomNumberGenerator);
 
     fn get_starting_point(&self) -> Point {

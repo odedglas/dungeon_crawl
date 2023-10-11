@@ -47,7 +47,7 @@ impl State {
         let mut resources = Resources::default();
         let mut rand = RandomNumberGenerator::new();
 
-        let architect = create_random_architect(&mut rand);
+        let architect = create_map_architect(&mut rand);
 
         let start_point = architect.get_starting_point();
 
@@ -55,8 +55,9 @@ impl State {
         spawn_amulet_of_yala(&mut ecs, architect.get_amulet_point());
 
         // Spawn monsters over each room except the room player starts in.
-        architect
-            .get_map_builder()
+        let theme = architect.get_map_theme(&mut rand);
+        let map_builder = architect.get_map_builder();
+        map_builder
             .spawned_monsters
             .iter()
             .for_each(|monster_position| {
@@ -64,7 +65,8 @@ impl State {
             });
 
         // Shared global game Resources
-        resources.insert(architect.get_map_builder().map.clone());
+        resources.insert(map_builder.map.clone());
+        resources.insert(theme);
         resources.insert(Camera::new(start_point));
         resources.insert(TurnState::AwaitingInput);
 

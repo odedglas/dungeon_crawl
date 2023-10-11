@@ -3,7 +3,12 @@ use crate::prelude::*;
 #[system]
 #[read_component(FieldOfView)]
 #[read_component(Player)]
-pub fn map_render(ecs: &SubWorld, #[resource] map: &Map, #[resource] camera: &Camera) {
+pub fn map_render(
+    ecs: &SubWorld,
+    #[resource] map: &Map,
+    #[resource] camera: &Camera,
+    #[resource] theme: &Box<dyn MapTheme>,
+) {
     let mut draw_batch = DrawBatch::new();
     draw_batch.target(0);
 
@@ -35,10 +40,8 @@ pub fn map_render(ecs: &SubWorld, #[resource] map: &Map, #[resource] camera: &Ca
             let cell_tint = if within_player_fov { WHITE } else { DARK_GRAY };
 
             // Draw map cells
-            let glyph = match map.cells[index] {
-                CellType::Floor => to_cp437('.'),
-                CellType::Wall => to_cp437('#'),
-            };
+            let cell_type = map.cells[index];
+            let glyph = theme.tile_to_render(cell_type);
 
             draw_batch.set(
                 point - offset, // Position would be relative to Camera's offset
