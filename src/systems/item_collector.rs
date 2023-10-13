@@ -5,7 +5,12 @@ use crate::prelude::*;
 #[read_component(AmuletOfYala)]
 #[read_component(Player)]
 #[read_component(Point)]
-pub fn item_collector(ecs: &mut SubWorld, #[resource] turn_state: &mut TurnState) {
+pub fn item_collector(
+    ecs: &mut SubWorld,
+    commands: &mut CommandBuffer,
+    #[resource] turn_state: &mut TurnState,
+    #[resource] key: &Option<VirtualKeyCode>,
+) {
     let player_position = <&Point>::query()
         .filter(component::<Player>())
         .iter(ecs)
@@ -27,7 +32,23 @@ pub fn item_collector(ecs: &mut SubWorld, #[resource] turn_state: &mut TurnState
 
             if is_amulet {
                 turn_state.game_won();
+                return;
+            }
+
+            if should_pick_item(key) {
+                commands.remove_component::<Point>(**entity); // Removes item from map
+                commands.add_component(**entity, CarriedItem) // Carries item
             }
         }
     }
+}
+
+fn should_pick_item(key: &Option<VirtualKeyCode>) -> bool {
+    if let Some(key) = key {
+        if *key == VirtualKeyCode::G {
+            return true;
+        }
+    }
+
+    false
 }

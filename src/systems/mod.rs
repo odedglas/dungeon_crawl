@@ -7,11 +7,12 @@ mod map_render;
 mod move_towards_player;
 mod movement;
 mod player_input;
-mod random_movement;
 mod tooltip;
 mod turn_transition;
+mod use_items;
 
 use crate::prelude::*;
+
 
 pub struct Systems {
     pub await_input_system: Schedule,
@@ -57,6 +58,8 @@ fn build_await_user_input_scheduler() -> Schedule {
 
 fn build_player_scheduler() -> Schedule {
     Schedule::builder()
+        .add_system(use_items::use_items_system())
+        .flush()
         .add_system(combat::combat_system())
         .flush()
         .add_system(movement::movement_system())
@@ -74,7 +77,6 @@ fn build_player_scheduler() -> Schedule {
 
 pub fn build_monster_scheduler() -> Schedule {
     Schedule::builder()
-        .add_system(random_movement::random_movement_system())
         .add_system(move_towards_player::move_towards_player_system())
         .flush()
         .add_system(combat::combat_system())

@@ -8,6 +8,7 @@ pub struct MapBuilder {
     pub map: Map,
     pub rooms: Vec<Rect>,
     pub spawned_monsters: Vec<Point>,
+    pub items: Vec<Point>,
     pub theme: Option<Box<dyn MapTheme>>,
 }
 
@@ -17,6 +18,7 @@ impl MapBuilder {
             map: Map::new(),
             rooms: vec![],
             spawned_monsters: vec![],
+            items: vec![],
             theme: None,
         }
     }
@@ -51,8 +53,22 @@ impl MapBuilder {
         Point::new(SCREEN_WIDTH / 2, SCREEN_HEIGHT / 2)
     }
 
-    pub fn random_edge_point(rand: &mut RandomNumberGenerator) -> Point {
+    pub fn random_map_point(rand: &mut RandomNumberGenerator) -> Point {
         Point::new(rand.range(0, SCREEN_WIDTH), rand.range(0, SCREEN_HEIGHT))
+    }
+
+    pub fn random_item_placement(&self, rand: &mut RandomNumberGenerator) -> Point {
+        let mut placement = None;
+
+        while placement.is_none() {
+            let location = Self::random_map_point(rand);
+
+            if self.map.can_enter_cell(location) {
+                placement = Some(location)
+            }
+        }
+
+        placement.unwrap()
     }
 }
 
@@ -134,5 +150,26 @@ pub trait MapArchitect: BaseMapArchitect {
         }
 
         monsters_positions
+    }
+
+    fn get_map_items(&self, rng: &mut RandomNumberGenerator) -> Vec<(GameEntity, Point)> {
+        let map_builder = self.get_map_builder();
+
+        let mut items: Vec<(GameEntity, Point)> = vec![
+            (GameEntity::AmuletOfYala, self.get_amulet_point()),
+            (
+                GameEntity::MapRevealer,
+                map_builder.random_item_placement(rng),
+            ),
+        ];
+
+        for _ in 0..10 {
+            let position = map_builder.random_item_placement(rng);
+            let healing_amount = rng.range(1, 5);
+
+            items.push((GameEntity::HealingPotion(healing_amount), position))
+        }
+
+        items
     }
 }

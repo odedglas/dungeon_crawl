@@ -8,4 +8,5 @@ edition = "2021"
 [dependencies]
 derives = { path = "./derives" }
 bracket-lib = "~0.8.1"
+object-pool = "0.5.4"
 legion = "=0.3.1"

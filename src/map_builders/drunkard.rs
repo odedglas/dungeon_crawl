@@ -91,7 +91,7 @@ impl MapArchitect for DrunkardArchitect {
 
         // Check if map has enough floor cells generated
         while !self.has_enough_floor() {
-            let random_map_start = MapBuilder::random_edge_point(rand);
+            let random_map_start = MapBuilder::random_map_point(rand);
             self.drunkard_point(&random_map_start, rand); // Starts the drunkard's algorithm on a random point
 
             self.close_center_perimeter(); // Since random point was chosen from one of map edges, we manually close edges of the map

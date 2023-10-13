@@ -49,6 +49,12 @@ impl Map {
         }
     }
 
+    pub fn reveal_map(&mut self) {
+        for cell in &mut self.revealed_cells {
+            *cell = true;
+        }
+    }
+
     pub fn clone(&self) -> Self {
         Self {
             cells: self.cells.clone(),

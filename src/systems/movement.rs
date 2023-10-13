@@ -1,17 +1,13 @@
 use crate::prelude::*;
 
-pub fn get_keyboard_delta(key: &Option<VirtualKeyCode>) -> Option<Point> {
-    if let Some(key) = key {
-        return Option::from(match key {
-            VirtualKeyCode::Left => Point::new(-1, 0),
-            VirtualKeyCode::Right => Point::new(1, 0),
-            VirtualKeyCode::Up => Point::new(0, -1),
-            VirtualKeyCode::Down => Point::new(0, 1),
-            _ => Point::zero(),
-        });
+pub fn get_keyboard_delta(key: &VirtualKeyCode) -> Point {
+    match key {
+        VirtualKeyCode::Left => Point::new(-1, 0),
+        VirtualKeyCode::Right => Point::new(1, 0),
+        VirtualKeyCode::Up => Point::new(0, -1),
+        VirtualKeyCode::Down => Point::new(0, 1),
+        _ => Point::zero(),
     }
-
-    None
 }
 
 pub fn randomized_move_delta(rand: &mut RandomNumberGenerator) -> Point {

@@ -2,6 +2,7 @@
 
 mod camera;
 mod components;
+mod entities;
 mod map;
 mod map_builders;
 mod screens;
@@ -25,6 +26,7 @@ mod prelude {
 
     pub use crate::camera::*;
     pub use crate::components::*;
+    pub use crate::entities::*;
     pub use crate::map::*;
     pub use crate::map_builders::*;
     pub use crate::screens::*;
@@ -48,20 +50,26 @@ impl State {
         let mut rand = RandomNumberGenerator::new();
 
         let architect = create_map_architect(&mut rand);
-
         let start_point = architect.get_starting_point();
 
         spawn_player(&mut ecs, start_point);
-        spawn_amulet_of_yala(&mut ecs, architect.get_amulet_point());
 
         // Spawn monsters over each room except the room player starts in.
         let theme = architect.get_map_theme(&mut rand);
         let map_builder = architect.get_map_builder();
+
         map_builder
             .spawned_monsters
             .iter()
             .for_each(|monster_position| {
                 spawn_monster(&mut ecs, &mut rand, *monster_position);
+            });
+
+        architect
+            .get_map_items(&mut rand)
+            .iter()
+            .for_each(|(map_item, item_position)| {
+                spawn_map_item(&mut ecs, map_item, *item_position);
             });
 
         // Shared global game Resources
@@ -94,21 +102,21 @@ impl GameState for State {
     fn tick(&mut self, ctx: &mut BTerm) {
         self.clear_console(ctx);
 
-        self.resources.insert(ctx.key); // Tick level resource
-
         ctx.set_active_console(0);
         self.resources.insert(Point::from_tuple(ctx.mouse_pos())); // Mouse position resolved with map layer console
+
+        let turn_state = *self.resources.get::<TurnState>().unwrap();
+        if turn_state == TurnState::AwaitingInput {
+            // Only update pressed key when awaiting input
+            self.resources.insert(ctx.key);
+        }
 
         self.systems
             .execute_turn(&mut self.ecs, &mut self.resources, ctx); // Executes turn based system
 
         if let Some(VirtualKeyCode::Key1) = ctx.key {
             // Game Reset key
-            let turn_state = *self.resources.get::<TurnState>().unwrap();
-
-            let allowed_states = vec![TurnState::GameOver, TurnState::GameWon];
-
-            if allowed_states.contains(&turn_state) {
+            if vec![TurnState::GameOver, TurnState::GameWon].contains(&turn_state) {
                 self.reset();
             }
         }

@@ -12,20 +12,20 @@ pub fn player_input(
     #[resource] key: &Option<VirtualKeyCode>,
     #[resource] turn_state: &mut TurnState,
 ) {
-    let delta = get_keyboard_delta(key);
-    if let Some(delta) = delta {
-        let mut players = <(Entity, &Point, &mut Health)>::query().filter(component::<Player>());
+    if let Some(key) = key {
+        let delta = get_keyboard_delta(key);
 
-        let (player_entity, destination, health) = players
-            .iter_mut(ecs)
-            .find_map(|(entity, pos, health)| Some((*entity, *pos + delta, health)))
-            .unwrap();
-
-        if should_heal(delta) {
-            health.current = i32::min(health.max, health.current + 1);
+        if delta == Point::zero() {
             turn_state.next();
             return;
         }
+
+        let mut players = <(Entity, &Point)>::query().filter(component::<Player>());
+
+        let (player_entity, destination) = players
+            .iter_mut(ecs)
+            .find_map(|(entity, pos)| Some((*entity, *pos + delta)))
+            .unwrap();
 
         // Check if player destination collides with Monster entity
         let mut enemies = <(Entity, &Point)>::query().filter(component::<Monster>());
@@ -59,8 +59,4 @@ pub fn player_input(
 
         turn_state.next();
     }
-}
-
-fn should_heal(delta: Point) -> bool {
-    delta == Point::zero()
 }

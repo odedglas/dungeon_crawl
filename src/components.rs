@@ -14,9 +14,6 @@ pub struct Player; // Tag
 pub struct Monster; // Tag
 
 #[derive(Clone, Copy, Debug, PartialEq, Eq)]
-pub struct RandomMovement;
-
-#[derive(Clone, Copy, Debug, PartialEq, Eq)]
 pub struct MoveTowardsPlayer;
 
 #[derive(Clone, Copy, Debug, PartialEq, Eq)]
@@ -57,7 +54,18 @@ pub struct EntityName(pub String);
 pub struct Item;
 
 #[derive(Clone, Copy, Debug, PartialEq, Eq)]
+pub struct CarriedItem;
+
+#[derive(Clone, Copy, Debug, PartialEq, Eq)]
 pub struct AmuletOfYala;
+
+#[derive(Clone, Copy, Debug, PartialEq, Eq)]
+pub struct HealingPotion {
+    pub heal_amount: i32,
+}
+
+#[derive(Clone, Copy, Debug, PartialEq, Eq)]
+pub struct MapRevealer;
 
 #[derive(Debug, PartialEq, Eq)]
 pub struct FieldOfView {
