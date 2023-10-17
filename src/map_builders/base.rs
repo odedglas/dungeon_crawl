@@ -92,6 +92,16 @@ pub trait MapArchitect: BaseMapArchitect {
         self.get_mut_map_builder().spawned_monsters = monsters_positions;
     }
 
+    fn place_next_level_staircase(&mut self) {
+        let starting_point = self.get_starting_point();
+        let map_builder = self.get_mut_map_builder();
+
+        let farthest_point = map_builder.find_most_distant(starting_point);
+
+        let exit_index = map_builder.map.point2d_to_index(farthest_point);
+        map_builder.map.cells[exit_index] = CellType::Staircase;
+    }
+
     fn build(&mut self, rng: &mut RandomNumberGenerator);
 
     fn get_starting_point(&self) -> Point {
@@ -163,7 +173,7 @@ pub trait MapArchitect: BaseMapArchitect {
             ),
         ];
 
-        for _ in 0..10 {
+        for _ in 0..15 {
             let position = map_builder.random_item_placement(rng);
             let healing_amount = rng.range(1, 5);
 

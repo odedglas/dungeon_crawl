@@ -7,6 +7,7 @@ const NUM_TILES: usize = (SCREEN_WIDTH * SCREEN_HEIGHT) as usize;
 pub enum CellType {
     Wall,
     Floor,
+    Staircase,
 }
 
 pub struct Map {
@@ -39,7 +40,13 @@ impl Map {
     }
 
     pub fn can_enter_cell(&self, position: Point) -> bool {
-        Self::in_screen_bounds(position) && self.cells[position_index(position)] == CellType::Floor
+        if !Self::in_screen_bounds(position) {
+            return false;
+        }
+
+        let cell_type = self.cells[position_index(position)];
+
+        cell_type == CellType::Floor || cell_type == CellType::Staircase
     }
 
     pub fn reveal_cells(&mut self, visible_tiles: &HashSet<Point>) {

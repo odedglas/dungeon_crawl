@@ -1,3 +1,4 @@
+#[derive(Clone, Copy, Debug, PartialEq, Eq)]
 pub enum GameEntity {
     Player,
     Orc,

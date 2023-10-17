@@ -10,6 +10,7 @@ pub fn player_input(
     ecs: &mut SubWorld,
     commands: &mut CommandBuffer,
     #[resource] key: &Option<VirtualKeyCode>,
+    #[resource] map: &Map,
     #[resource] turn_state: &mut TurnState,
 ) {
     if let Some(key) = key {
@@ -57,6 +58,11 @@ pub fn player_input(
             ));
         }
 
-        turn_state.next();
+        let cell_type = map.cells[map.point2d_to_index(destination)];
+        if cell_type == CellType::Staircase {
+            turn_state.next_level();
+        } else {
+            turn_state.next();
+        }
     }
 }

@@ -13,7 +13,6 @@ mod use_items;
 
 use crate::prelude::*;
 
-
 pub struct Systems {
     pub await_input_system: Schedule,
     pub player_system: Schedule,
@@ -40,6 +39,7 @@ impl Systems {
             TurnState::MonsterTurn => self.monster_system.execute(ecs, resources),
             TurnState::GameOver => game_over_display(ctx),
             TurnState::GameWon => game_won_display(ctx),
+            TurnState::NextLevel => {}
         }
     }
 }

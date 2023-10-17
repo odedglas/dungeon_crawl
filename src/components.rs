@@ -92,3 +92,13 @@ impl FieldOfView {
         self.is_dirty = false;
     }
 }
+
+impl Clone for FieldOfView {
+    fn clone(&self) -> Self {
+        Self::new(self.radius)
+    }
+
+    fn clone_from(&mut self, _source: &Self) {
+        *self = Self::new(self.radius);
+    }
+}

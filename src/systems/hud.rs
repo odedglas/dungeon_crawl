@@ -7,7 +7,7 @@ use object_pool::Reusable;
 #[read_component(Item)]
 #[read_component(CarriedItem)]
 #[read_component(EntityName)]
-pub fn hud(ecs: &SubWorld) {
+pub fn hud(ecs: &SubWorld, #[resource] level: &Level) {
     let mut draw_batch = DrawBatch::new();
     draw_batch.target(2);
 
@@ -16,6 +16,7 @@ pub fn hud(ecs: &SubWorld) {
 
     draw_hud_title(&mut draw_batch, player_health);
     draw_player_health(&mut draw_batch, player_health);
+    draw_map_level(&mut draw_batch, *level);
     draw_player_items(ecs, &mut draw_batch);
 
     draw_batch.submit(10000).expect("Batch error");
@@ -49,6 +50,14 @@ fn draw_player_health(draw_batch: &mut Reusable<DrawBatch>, player_health: &Heal
             player_health.current, player_health.max
         ),
         ColorPair::new(WHITE, RED),
+    );
+}
+
+fn draw_map_level(draw_batch: &mut Reusable<DrawBatch>, level: usize) {
+    draw_batch.print_color_right(
+        Point::new(SCREEN_WIDTH * 2, 2),
+        format!("Dungeon Level: {}", level),
+        ColorPair::new(YELLOW, BLACK),
     );
 }
 

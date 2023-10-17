@@ -5,6 +5,7 @@ pub enum TurnState {
     MonsterTurn,
     GameOver,
     GameWon,
+    NextLevel,
 }
 
 impl TurnState {
@@ -20,9 +21,10 @@ impl TurnState {
         *self = match self {
             TurnState::AwaitingInput => TurnState::PlayerTurn,
             TurnState::PlayerTurn => TurnState::MonsterTurn,
-            TurnState::MonsterTurn | TurnState::GameOver | TurnState::GameWon => {
-                TurnState::AwaitingInput
-            }
+            TurnState::MonsterTurn
+            | TurnState::GameOver
+            | TurnState::GameWon
+            | TurnState::NextLevel => TurnState::AwaitingInput,
         }
     }
 
@@ -32,5 +34,9 @@ impl TurnState {
 
     pub fn game_won(&mut self) {
         *self = TurnState::GameWon;
+    }
+
+    pub fn next_level(&mut self) {
+        *self = TurnState::NextLevel;
     }
 }
