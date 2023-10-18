@@ -4,7 +4,7 @@ use derives::BaseMapArchitect;
 
 use std::cmp::{max, min};
 
-const MAX_ROOMS: usize = 2;
+const MAX_ROOMS: usize = 25;
 
 fn create_room_rect(rand: &mut RandomNumberGenerator) -> Rect {
     Rect::with_size(

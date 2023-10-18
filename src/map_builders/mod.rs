@@ -19,9 +19,9 @@ pub fn create_map_architect(
     level: usize,
 ) -> Box<dyn MapArchitect> {
     let mut architect: Box<dyn MapArchitect> = match rand.range(0, 3) {
-        0 => Box::new(RandomRoomsArchitect::new()),
+        0 => Box::new(DrunkardArchitect::new()),
         1 => Box::new(RandomRoomsArchitect::new()),
-        _ => Box::new(RandomRoomsArchitect::new()),
+        _ => Box::new(CellularAutomataArchitect::new()),
     };
 
     architect.build(rand);
