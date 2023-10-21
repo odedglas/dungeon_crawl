@@ -54,7 +54,13 @@ pub struct EntityName(pub String);
 pub struct Item;
 
 #[derive(Clone, Copy, Debug, PartialEq, Eq)]
-pub struct CarriedItem;
+pub struct CarriedItem(pub Entity);
+
+#[derive(Clone, Copy, Debug, PartialEq, Eq)]
+pub struct Damage(pub i32);
+
+#[derive(Clone, Copy, Debug, PartialEq, Eq)]
+pub struct Weapon(pub i32);
 
 #[derive(Clone, Copy, Debug, PartialEq, Eq)]
 pub struct AmuletOfYala;

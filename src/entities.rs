@@ -8,6 +8,9 @@ pub enum GameEntity {
     AmuletOfYala,
     HealingPotion(i32),
     MapRevealer,
+    RustySword,
+    ShinySword,
+    HugeSword,
 }
 
 impl GameEntity {
@@ -21,6 +24,9 @@ impl GameEntity {
             GameEntity::AmuletOfYala => '|',
             GameEntity::HealingPotion(_) => '!',
             GameEntity::MapRevealer => '{',
+            GameEntity::RustySword => 's',
+            GameEntity::ShinySword => 'S',
+            GameEntity::HugeSword => '/',
         }
     }
 
@@ -34,6 +40,18 @@ impl GameEntity {
             GameEntity::AmuletOfYala => "Amulet of Yala".to_string(),
             GameEntity::HealingPotion(heal_amount) => format!("Healing Potion ({heal_amount}HP)"),
             GameEntity::MapRevealer => "Dungeon Map".to_string(),
+            GameEntity::RustySword => format!("Rusty Sword ({} DMG)", self.get_damage()),
+            GameEntity::ShinySword => format!("Shiny Sword ({} DMG)", self.get_damage()),
+            GameEntity::HugeSword => format!("Huge Sword ({} DMG)", self.get_damage()),
+        }
+    }
+
+    pub fn get_damage(&self) -> i32 {
+        match self {
+            GameEntity::RustySword => 1,
+            GameEntity::ShinySword => 2,
+            GameEntity::HugeSword => 3,
+            _ => 0,
         }
     }
 

@@ -5,13 +5,15 @@ use crate::prelude::*;
 #[read_component(AmuletOfYala)]
 #[read_component(Player)]
 #[read_component(Point)]
+#[read_component(CarriedItem)]
+#[read_component(Weapon)]
 pub fn item_collector(
     ecs: &mut SubWorld,
     commands: &mut CommandBuffer,
     #[resource] turn_state: &mut TurnState,
     #[resource] key: &Option<VirtualKeyCode>,
 ) {
-    let player_position = <&Point>::query()
+    let (player_entity, player_position) = <(Entity, &Point)>::query()
         .filter(component::<Player>())
         .iter(ecs)
         .next()
@@ -36,9 +38,31 @@ pub fn item_collector(
             }
 
             if should_pick_item(key) {
-                commands.remove_component::<Point>(**entity); // Removes item from map
-                commands.add_component(**entity, CarriedItem) // Carries item
+                remove_existing_weapon(ecs, commands, &player_entity.clone(), entity);
+
+                let der_entity = **entity;
+                commands.remove_component::<Point>(der_entity); // Removes item from map
+                commands.add_component(der_entity, CarriedItem(*player_entity)) // Carries item
             }
+        }
+    }
+}
+
+fn remove_existing_weapon(
+    ecs: &SubWorld,
+    commands: &mut CommandBuffer,
+    player_entity: &Entity,
+    entity: &Entity,
+) {
+    if let Ok(e) = ecs.entry_ref(*entity) {
+        if e.get_component::<Weapon>().is_ok() {
+            // Remove existing weapon if present.
+            <(Entity, &CarriedItem, &Weapon)>::query()
+                .iter(ecs)
+                .filter(|(_, carried_item, _)| carried_item.0 == *player_entity)
+                .for_each(|(existing_weapon_entity, _, _)| {
+                    commands.remove(*existing_weapon_entity);
+                })
         }
     }
 }

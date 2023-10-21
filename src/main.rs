@@ -80,6 +80,7 @@ impl State {
         let start_point = architect.get_starting_point();
 
         if level == 1 {
+            // Player is being spawned only on the first level and carried towards next one.
             spawn_player(&mut ecs, start_point);
         }
 
@@ -95,7 +96,7 @@ impl State {
             });
 
         architect
-            .get_map_items(&mut rand)
+            .get_map_items(&mut rand, level)
             .iter()
             .filter(|(map_item, _)| map_item != &GameEntity::AmuletOfYala || level == MAX_LEVEL)
             .for_each(|(map_item, item_position)| {

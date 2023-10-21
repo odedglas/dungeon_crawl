@@ -1,6 +1,6 @@
 use crate::prelude::*;
 
-type MonsterSpawn = (i32, String, FontCharType);
+type MonsterSpawn = (i32, String, FontCharType, i32);
 
 pub fn spawn_player(ecs: &mut World, pos: Point) {
     let player_component = (
@@ -12,13 +12,14 @@ pub fn spawn_player(ecs: &mut World, pos: Point) {
         },
         FieldOfView::new(8),
         Health::new(10),
+        Damage(1),
     );
 
     ecs.push(player_component);
 }
 
 pub fn spawn_monster(ecs: &mut World, rand: &mut RandomNumberGenerator, pos: Point) {
-    let (hp, name, glyph) = randomized_monster(rand);
+    let (hp, name, glyph, damage) = randomized_monster(rand);
 
     ecs.push((
         Monster,
@@ -31,6 +32,7 @@ pub fn spawn_monster(ecs: &mut World, rand: &mut RandomNumberGenerator, pos: Poi
         FieldOfView::new(6),
         Health::new(hp),
         EntityName(name),
+        Damage(damage),
     ));
 }
 
@@ -40,13 +42,15 @@ fn randomized_monster(rand: &mut RandomNumberGenerator) -> MonsterSpawn {
             3,
             "Two Headed".to_string(),
             to_cp437(GameEntity::TwoHeaded.glyph()),
+            3,
         ),
-        2..=3 => (4, "Oger".to_string(), to_cp437(GameEntity::Oger.glyph())),
-        4..=6 => (2, "Orc".to_string(), to_cp437(GameEntity::Orc.glyph())),
+        2..=3 => (4, "Oger".to_string(), to_cp437(GameEntity::Oger.glyph()), 2),
+        4..=6 => (2, "Orc".to_string(), to_cp437(GameEntity::Orc.glyph()), 2),
         _ => (
             1,
             "Goblin".to_string(),
             to_cp437(GameEntity::Goblin.glyph()),
+            1,
         ),
     }
 }
@@ -72,6 +76,9 @@ pub fn spawn_map_item(ecs: &mut World, entity: &GameEntity, pos: Point) {
                 heal_amount: *heal_amount,
             }),
             GameEntity::MapRevealer => entry.add_component(MapRevealer),
+            GameEntity::RustySword | GameEntity::ShinySword | GameEntity::HugeSword => {
+                entry.add_component(Weapon(entity.get_damage()));
+            }
             _ => println!("Invalid Map Item"),
         };
     }

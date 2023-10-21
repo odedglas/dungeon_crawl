@@ -162,16 +162,43 @@ pub trait MapArchitect: BaseMapArchitect {
         monsters_positions
     }
 
-    fn get_map_items(&self, rng: &mut RandomNumberGenerator) -> Vec<(GameEntity, Point)> {
+    fn get_map_items(
+        &self,
+        rng: &mut RandomNumberGenerator,
+        level: usize,
+    ) -> Vec<(GameEntity, Point)> {
         let map_builder = self.get_map_builder();
 
-        let mut items: Vec<(GameEntity, Point)> = vec![
-            (GameEntity::AmuletOfYala, self.get_amulet_point()),
-            (
-                GameEntity::MapRevealer,
+        let mut items: Vec<(GameEntity, Point)> = vec![(
+            GameEntity::MapRevealer,
+            map_builder.random_item_placement(rng),
+        )];
+
+        match level {
+            // Level specific items
+            1 => {
+                items.push((
+                    GameEntity::RustySword,
+                    map_builder.random_item_placement(rng),
+                ));
+                items.push((
+                    GameEntity::ShinySword,
+                    map_builder.random_item_placement(rng),
+                ));
+            }
+            2 => items.push((
+                GameEntity::ShinySword,
                 map_builder.random_item_placement(rng),
-            ),
-        ];
+            )),
+            MAX_LEVEL => {
+                items.push((
+                    GameEntity::HugeSword,
+                    map_builder.random_item_placement(rng),
+                ));
+                items.push((GameEntity::AmuletOfYala, self.get_amulet_point()));
+            }
+            _ => panic!("Unknown game level {level}"),
+        };
 
         for _ in 0..15 {
             let position = map_builder.random_item_placement(rng);
