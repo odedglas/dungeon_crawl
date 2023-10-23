@@ -40,7 +40,7 @@ pub fn combat(
             .sum();
 
         attacker_damage += weapon_damage;
-        if let Ok(mut health) = ecs
+        if let Ok(health) = ecs
             .entry_mut(*target)
             .unwrap()
             .get_component_mut::<Health>()

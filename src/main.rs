@@ -133,6 +133,7 @@ impl State {
 
     pub fn next_level(&mut self) {
         let mut new_world = World::default();
+
         let next_level = Some(self.level + 1);
 
         let mut duplicate = create_world_merger();
@@ -165,7 +166,7 @@ impl State {
             .filter(component::<Player>())
             .iter_mut(&mut self.ecs)
             .for_each(|(_entity, position, fov)| {
-                fov.mark_dirty();
+                fov.mark_dirty(); // Marking its FOV as dirty so it will be re-calculated
                 *position = map_start;
             });
     }
@@ -190,7 +191,7 @@ impl GameState for State {
 
         if let Some(VirtualKeyCode::Key1) = ctx.key {
             // Game Reset key
-            if vec![TurnState::GameOver, TurnState::GameWon].contains(&turn_state) {
+            if [TurnState::GameOver, TurnState::GameWon].contains(&turn_state) {
                 self.reset();
             }
         }

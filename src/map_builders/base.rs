@@ -64,7 +64,7 @@ impl MapBuilder {
             let location = Self::random_map_point(rand);
 
             if self.map.can_enter_cell(location) {
-                placement = Some(location)
+                placement = Some(location);
             }
         }
 
@@ -204,7 +204,7 @@ pub trait MapArchitect: BaseMapArchitect {
             let position = map_builder.random_item_placement(rng);
             let healing_amount = rng.range(1, 5);
 
-            items.push((GameEntity::HealingPotion(healing_amount), position))
+            items.push((GameEntity::HealingPotion(healing_amount), position));
         }
 
         items

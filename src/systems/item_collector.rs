@@ -42,7 +42,8 @@ pub fn item_collector(
 
                 let der_entity = **entity;
                 commands.remove_component::<Point>(der_entity); // Removes item from map
-                commands.add_component(der_entity, CarriedItem(*player_entity)) // Carries item
+                commands.add_component(der_entity, CarriedItem(*player_entity));
+                // Carries item
             }
         }
     }
@@ -62,7 +63,7 @@ fn remove_existing_weapon(
                 .filter(|(_, carried_item, _)| carried_item.0 == *player_entity)
                 .for_each(|(existing_weapon_entity, _, _)| {
                     commands.remove(*existing_weapon_entity);
-                })
+                });
         }
     }
 }

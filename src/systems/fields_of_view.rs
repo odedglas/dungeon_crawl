@@ -10,6 +10,6 @@ pub fn fields_of_view(ecs: &mut SubWorld, #[resource] map: &Map) {
     fov.iter_mut(ecs)
         .filter(|(_, _, fov)| fov.is_dirty)
         .for_each(|(_entity, pos, fov)| {
-            fov.set_fields_of_view(field_of_view_set(*pos, fov.radius, map))
+            fov.set_fields_of_view(field_of_view_set(*pos, fov.radius, map));
         });
 }

@@ -54,7 +54,7 @@ fn draw_vault(map_builder: &mut MapBuilder, placement: Point) {
                 }
                 '-' => map_builder.map.cells[idx] = CellType::Floor,
                 '#' => map_builder.map.cells[idx] = CellType::Wall,
-                _ => println!("No idea what to do with [{}]", cell_char),
+                _ => println!("No idea what to do with [{cell_char}]"),
             }
             i += 1;
         }

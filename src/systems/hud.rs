@@ -56,7 +56,7 @@ fn draw_player_health(draw_batch: &mut Reusable<DrawBatch>, player_health: &Heal
 fn draw_map_level(draw_batch: &mut Reusable<DrawBatch>, level: usize) {
     draw_batch.print_color_right(
         Point::new(SCREEN_WIDTH * 2, 2),
-        format!("Dungeon Level: {}", level),
+        format!("Dungeon Level: {level}"),
         ColorPair::new(YELLOW, BLACK),
     );
 }
